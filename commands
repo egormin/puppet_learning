@@ -1,0 +1,8 @@
+## Module searching
+puppet module search graphite
+
+## Install module
+puppet module install dwerder-graphite -v 5.16.1
+
+## Show installed modules
+puppet module list
