@@ -14,7 +14,6 @@ user { 'root':
     ...
   }
 
-
 Below are some of the core resource types you'll encounter most often:
 
     user A user
@@ -26,9 +25,24 @@ Below are some of the core resource types you'll encounter most often:
     exec An external command
     host A host entry
 
-
 Resource title (title - 'root')
 user { 'root':
     ...
   }
+
+Attribute Value Pairs
+user { 'root':
+  ensure           => present,
+  comment          => 'root',
+  gid              => '0',
+  home             => '/root',
+  password         => '$1$jrm5tnjw$h8JJ9mCZLmJvIxvDLjw1M/',
+  password_max_age => '99999',
+  password_min_age => '0',
+  shell            => '/bin/bash',
+  uid              => '0',
+}
+After the colon in that first line comes a hash of attributes and their corresponding values
+
+
 

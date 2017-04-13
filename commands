@@ -7,7 +7,6 @@ puppet module install dwerder-graphite -v 5.16.1
 ## Show installed modules
 puppet module list
 
-
 ## To manually trigger a Puppet run
 puppet agent --test
 
@@ -18,7 +17,33 @@ puppet resource user root
 puppet describe --list
 
 ## To show info about resource
-puppet describe file
+puppet describe file | less
+
+## Apply code
+puppet apply -e "user { 'galatea': ensure => present, }"
+
+## To show code in text redactor
+puppet resource -e user root
+And we can add attribute to code 
+comment => 'Galatea of Cyprus',
+and save it
+so 
+we have:
+user { 'galatea':
+  ensure           => 'present',
+  comment          => 'Galatea of Cyprus',  ## this attr we have added
+  gid              => '1004',
+  home             => '/home/galatea',
+  password         => '!!',
+  password_max_age => '99999',
+  password_min_age => '0',
+  shell            => '/bin/bash',
+  uid              => '1004',
+}
+
+
+
+
 
 
 
