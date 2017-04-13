@@ -44,6 +44,61 @@ user { 'galatea':
 
 
 
+## Module Creating
+cd /etc/puppetlabs/code/environments/production/modules
+mkdir -p cowsayings/{manifests,examples}
+vim cowsayings/manifests/cowsay.pp
+
+class cowsayings::cowsay {
+  package { 'cowsay':
+    ensure   => present,
+    provider => 'gem',
+  }
+}
+
+vim cowsayings/examples/cowsay.pp
+insert:
+include cowsayings::cowsay
+
+
+## To validate manifest
+puppet parser validate cowsayings/manifests/cowsay.pp
+
+
+## To emulate
+puppet apply --noop cowsayings/examples/cowsay.pp
+
+## To install necessary gem
+gem install --local --no-rdoc --no-ri /var/cache/rubygems/gems/cowsay-*.gem)
+
+## To apply changes
+puppet apply
+
+# Add data to init.pp
+vim cowsayings/manifests/init.pp
+
+class cowsayings {
+  include cowsayings::cowsay
+  include cowsayings::fortune
+}
+
+## To remove package
+puppet resource package fortune-mod ensure=absent
+puppet resource package cowsay ensure=absent provider=gem
+
+## To add both classes to apply  
+vim cowsayings/examples/init.pp  :
+include cowsayings
+
+
+
+######################## MODULES ####################
+
+## To show were modules placed
+puppet master --configprint modulepath
+
+## To show modules structure
+tree -L 2 -d /etc/puppetlabs/code/environments/production/modules/
 
 
 

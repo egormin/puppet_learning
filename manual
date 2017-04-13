@@ -45,4 +45,17 @@ user { 'root':
 After the colon in that first line comes a hash of attributes and their corresponding values
 
 
+############# Manifests and classes##############
+
+A manifest is nothing more than some puppet code saved to a file with the .pp extension.
+
+In Puppet's DSL a class is a named block of Puppet code.
+
+A class is a collection of related resources and other classes which, once defined, can be declared as a single unit. Puppet classes are also singleton, which means that unlike classes in object oriented programming, a Puppet class can only be declared a single time on a given node.
+
+A manifest is a file containing Puppet code, and appended with the .pp extension. In this quest, we used manifests in the ./manifests directory each to define a single class, and used a corresponding test manifest in the ./examples directory to declare each of those classes.
+
+
+
+
 
