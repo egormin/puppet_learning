@@ -1,0 +1,34 @@
+
+Puppet interprets any aspect of your system configuration you want to manage (users, files, services, and packages, to give some common examples) as a unit called a resource.
+The block of code that describes a resource is called a resource declaration
+
+This resource declaration syntax is composed of three main components:
+
+    Type
+    Title
+    Attribute value pairs
+
+The type represents the kind of thing that the resource describes
+Resource type:
+user { 'root':
+    ...
+  }
+
+
+Below are some of the core resource types you'll encounter most often:
+
+    user A user
+    group A user group
+    file A specific file
+    package A software package
+    service A running service
+    cron A scheduled cron job
+    exec An external command
+    host A host entry
+
+
+Resource title (title - 'root')
+user { 'root':
+    ...
+  }
+

@@ -6,3 +6,25 @@ puppet module install dwerder-graphite -v 5.16.1
 
 ## Show installed modules
 puppet module list
+
+
+## To manually trigger a Puppet run
+puppet agent --test
+
+# To show resource
+puppet resource user root
+
+## To show built-in resource list
+puppet describe --list
+
+## To show info about resource
+puppet describe file
+
+
+
+
+
+
+
+
+
