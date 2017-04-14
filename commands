@@ -101,6 +101,41 @@ puppet master --configprint modulepath
 tree -L 2 -d /etc/puppetlabs/code/environments/production/modules/
 
 
+######################## RESOURCES ####################
+
+## To show current state of resources
+First, check the state of the NTP package:
+
+puppet resource package ntp
+check the NTP configuration file:
+
+puppet resource file /etc/ntp.conf
+finally, see if the Network Time Protocol Daemon (NTPD) service is running:
+
+puppet resource service ntpd
+
+#### Example. Installation ntp module
+puppet module install puppetlabs-ntp
+vim /etc/puppetlabs/code/environments/production/manifests/site.pp
+node 'learning.puppetlabs.vm' {
+  include ntp
+}
+puppet agent -t
+
+change site.pp
+class { 'ntp':
+  servers => [
+    'nist-time-server.eoni.com',
+    'nist1-lv.ustiming.org',
+    'ntp-nist.ldsbc.edu'
+  ]
+}
+
+
+
+
+
+
 
 
 

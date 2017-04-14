@@ -21,8 +21,30 @@
 1)rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
 2)yum install -y puppet
 
+rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+yum install puppet-agent
+
 /etc/init.d/puppet — демон клиента для автопроверок, не изменилось ли что на сервере. Мы будем пользоваться ком строкой.
 /etc/sysconfig/puppet — микроконфиг. Приводим его к виду вроде:
 
 3)systemctl start puppet.service
 4)puppet agent –test синхронизация
+
+
+To connect client to master
+Then we can connect from the client to the server
+
+puppet agent --server puppetmaster --waitforcert 60 --test
+
+You should see
+
+info: Creating a new SSL certificate request for puppetclient
+
+Now on the server we can see the request that has come in with
+
+puppet cert --list
+
+You should see ‘puppetclient’. Now we can sign the certificate with
+
+puppet cert --sign puppetclient
+
