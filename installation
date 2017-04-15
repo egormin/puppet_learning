@@ -48,3 +48,37 @@ You should see ‘puppetclient’. Now we can sign the certificate with
 
 puppet cert --sign puppetclient
 
+
+############################ NEW WAY ###############################
+
+## master
+rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+yum install puppetserver
+
+#### Also may be usefull to modify java settings
+/etc/sysconfig/puppetserver
+# Modify this if you'd like to change the memory allocation, enable JMX, etc
+ JAVA_ARGS="-Xms2g -Xmx2g"
+ 
+ ## And start server
+ systemctl start puppetserver
+ 
+
+## agent
+rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+yum install puppet-agent
+
+
+### Connect agent to master
+# from client 
+1) puppet agent -t
+
+# from master
+2) puppet cert list    # to see certs, received from clients
+3) puppet cert sign client2.localdomain   # to approve cert
+puppet cert sign client2.localdomain
+or puppet cert sign --all   # for all certs signing
+
+####################################################################
+
+
