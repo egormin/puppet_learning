@@ -22,6 +22,19 @@ puppet describe file | less
 ## Apply code
 puppet apply -e "user { 'galatea': ensure => present, }"
 
+# or
+create hello.pp with content
+file { 'helloworld' :
+  ensure => present,
+  path => '/tmp/helloworld',
+  content => 'Hello World!',
+  mode => '0644',
+  owner => 'root',
+  group => 'root'
+}
+# and
+puppet apply hello.pp
+
 ## To show code in text redactor
 puppet resource -e user root
 And we can add attribute to code 
