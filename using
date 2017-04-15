@@ -1,6 +1,6 @@
 ### Central point of puppet:
 /etc/puppetlabs/code/environments/production/manifests
-
+########################################### EXAPLE 1 ##############################################
 nano site.pp:
 node default{
   notify { 'Hello, World!!!!!' : }
@@ -32,3 +32,106 @@ Notice: Applied catalog in 0.02 seconds
 [root@client1 vagrant]# cat  /tmp/helloworld 
 Hello World![root@client1 vagrant]# rm -f /tmp/helloworld 
 [root@client1 vagrant]#
+
+########################################### EXAPLE 2 ##############################################
+Output with variables:
+
+node default{
+  case $osfamily {
+    'Ubuntu', 'Debian': {
+      notify { 'Deb system': }
+     }
+    'RedHat', 'CentOS': {
+      notify { "\nThis is Centos, and the OS Family is: $osfamily": }   
+    }
+  }
+}
+
+# Output:
+[root@client1 vagrant]# puppet agent -t
+Info: Using configured environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for client1.localdomain
+Info: Applying configuration version '1492277670'
+Notice: 
+This is Centos, and the OS Family is: RedHat
+Notice: /Stage[main]/Main/Node[default]/Notify[
+This is Centos, and the OS Family is: RedHat]/message: defined 'message' as '
+This is Centos, and the OS Family is: RedHat'
+Notice: Applied catalog in 0.01 seconds
+[root@client1 vagrant]#
+
+########################################### EXAPLE 3 ##############################################
+Httpd installation:
+
+node default{
+  case $osfamily {
+    'Ubuntu', 'Debian': {
+      notify { 'Deb system': }
+     }
+    'RedHat', 'CentOS': {
+      notify { "\nThis is Centos, and the OS Family is: $osfamily": }
+      include httpd
+     }
+  }
+}
+
+class httpd {
+  service { 'httpd':
+    ensure => running,
+    enable => true,
+    require => Package['httpd'],
+  }
+  package { 'httpd':
+    ensure => installed,
+  }
+}
+
+
+########################################### EXAPLE 4 ##############################################
+# Ne zarabotala
+Httpd installation:
+node default{
+  case $osfamily {
+    'Ubuntu', 'Debian': {
+      notify { 'Deb system': }
+     }
+    'RedHat', 'CentOS': {  
+       notify {"\n OS Family is $osfamily":}   
+       httpd::vhost { 'puppettest1.com':
+         name => "puppettest1.com"
+       }
+       httpd::vhost { 'puppettest2.com':
+         name => "puppettest2.com"
+       }
+    }
+  }
+}
+
+class httpd {
+  service { 'httpd':
+    ensure => running,
+    enable => true,
+    require => Package['httpd'], 
+  }
+  package { 'httpd':
+    ensure => installed,
+  }
+}
+
+define httpd::vhost {
+  file {"/etc/httpd/conf.d/$name.conf":
+    content => "<VertualHost *:80>\n\tServerName $name\n\tDocumentRoot /var/www/$name\n<VirtualHost>\n",
+    require => Package['httpd'],
+    notify => Service['httpd'],
+  }
+  file {"/var/www/$name":
+    ensure => directory,
+  }
+  file {"/var/www/$name/index.html":
+    content => "<html><h1>Hello, World! $name</h1></html>",
+    require => File["/var/www/$name"],
+  }
+}
+
