@@ -1,0 +1,34 @@
+### Central point of puppet:
+/etc/puppetlabs/code/environments/production/manifests
+
+nano site.pp:
+node default{
+  notify { 'Hello, World!!!!!' : }
+  file { 'helloworld' :
+    ensure => present,
+    path => '/tmp/helloworld',
+    content => 'Hello World!',
+    mode => '0644',
+    owner => 'root',
+    group => 'root'
+  }
+}
+
+### Here
+default - to all nodes
+notify - Show message on the screen
+
+### Result on the node1:
+[root@client1 vagrant]# puppet agent -t
+Info: Using configured environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for client1.localdomain
+Info: Applying configuration version '1492274576'
+Notice: Hello, World!!!!!
+Notice: /Stage[main]/Main/Node[default]/Notify[Hello, World!!!!!]/message: defined 'message' as 'Hello, World!!!!!'
+Notice: /Stage[main]/Main/Node[default]/File[helloworld]/ensure: defined content as '{md5}ed076287532e86365e841e92bfc50d8c'
+Notice: Applied catalog in 0.02 seconds
+[root@client1 vagrant]# cat  /tmp/helloworld 
+Hello World![root@client1 vagrant]# rm -f /tmp/helloworld 
+[root@client1 vagrant]#
