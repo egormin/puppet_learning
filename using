@@ -135,7 +135,7 @@ define httpd::vhost {
   }
 }
 
-########################################### EXAPLE 4 ##############################################
+########################################### EXAPLE 5 ##############################################
 Using params
 site.pp:   (/etc/puppetlabs/code/environments/prod/manifests), prod is my own environment
 node default {
@@ -157,18 +157,21 @@ class zabbixserver::params
 
 init.pp  (/etc/puppetlabs/code/environments/prod/modules/zabbixserver/manifests) zabbixserver is my own module
 class zabbixserver (	
-  $mysqlpassword_root = 'Zabbix_2015',
+    $mysqlpassword_root = 'Zabbix_2015',
 	$zabbix_db_name     = 'zabbix',
 	$zabbix_db_user     = 'zabbix',
 	$zabbix_db_password = 'zabbix',
 	) inherits zabbixserver::params
 
 {
+	class { '::zabbixserver::install':
+     	mysqlpassword => $mysqlpassword_root,
+     }
 	notify { "Zabbix db name = $zabbix_db_name" :}
 	notify { "Zabbix db user = $zabbix_db_user" :}
 	notify { "Zabbix db password = $zabbix_db_password" :}
 	notify { "Zabbix root pass for mysql = $mysqlpassword_root" :}
-	notify { "Zabbix packages = $zabbixserver::params::zabbix_packages :}
+	notify { "Zabbix packages = $zabbixserver::params::zabbix_packages" :}
 }
 
 
