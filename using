@@ -135,3 +135,90 @@ define httpd::vhost {
   }
 }
 
+########################################### EXAPLE 4 ##############################################
+Using params
+site.pp:   (/etc/puppetlabs/code/environments/prod/manifests), prod is my own environment
+node default {
+	include zabbixserver 	
+}
+
+params.pp  (/etc/puppetlabs/code/environments/prod/modules/zabbixserver/manifests) zabbixserver is my own module
+class zabbixserver::params
+{
+	$baseurl            = "http://repo.zabbix.com/zabbix/2.4/rhel/7/x86_64/"
+	$gpgkey             = "http://repo.zabbix.com/zabbix-oficial-repo.key"
+	$zabbix_packages    = ["zabbix-server-mysql", "zabbix-agent", "zabbix-web-mysql", "zabbix-java-gateway", "httpd", "php"]
+	$mysqlpassword_root = 'Zabbix_2015'
+	$zabbix_db_name     = 'zabbix'
+	$zabbix_db_user     = 'zabbix'
+	$zabbix_db_password = 'zabbix'
+	$timezone           = 'America/New_York'
+}
+
+init.pp  (/etc/puppetlabs/code/environments/prod/modules/zabbixserver/manifests) zabbixserver is my own module
+class zabbixserver (	
+  $mysqlpassword_root = 'Zabbix_2015',
+	$zabbix_db_name     = 'zabbix',
+	$zabbix_db_user     = 'zabbix',
+	$zabbix_db_password = 'zabbix',
+	) inherits zabbixserver::params
+
+{
+	notify { "Zabbix db name = $zabbix_db_name" :}
+	notify { "Zabbix db user = $zabbix_db_user" :}
+	notify { "Zabbix db password = $zabbix_db_password" :}
+	notify { "Zabbix root pass for mysql = $mysqlpassword_root" :}
+	notify { "Zabbix packages = $zabbixserver::params::zabbix_packages :}
+}
+
+
+install.pp (/etc/puppetlabs/code/environments/prod/modules/zabbixserver/manifests) zabbixserver is my own module
+class zabbixserver::install (
+	$mysqlpassword = $zabbixserver::params::mysqlpassword_root,
+	) inherits zabbixserver::params
+{
+	class { '::mysql::server':
+		root_password          => $mysqlpassword,
+		remove_default_account => true,
+	}
+	file { 'zabbixserver-repository':
+			path    => "/etc/yum.repos.d/zabbix.repo",
+			owner   => 'root',
+			group   => 'root',
+			mode    => 'go+r,u+rw',
+			content => template('zabbixserver/zabbix.repo.erb'),
+	}
+	package { 'epel-release':
+			ensure  => installed,
+			require => File["zabbixserver-repository"]
+	}	
+	package { '$zabbixserver::params::zabbix_packages':
+		ensure  => installed,
+		require => [Package["epel-release"],
+		            Package['mariadb-server']
+		           ]
+	}
+	service { 'httpd':
+		enable      => true,
+		ensure      => 'running',
+		hasrestart => true,
+		hasstatus  => true,
+		require    => Package['httpd','php'],
+	}
+	service { 'zabbix-server':
+		enable      => true,
+		ensure      => 'running',
+		hasrestart => true,
+		hasstatus  => true,
+		require    => Package[$zabbixserver::params::zabbix_packages],
+	}
+}
+
+
+zabbix.repo.erb  (/etc/puppetlabs/code/environments/prod/modules/zabbixserver/templates)
+
+[Zabbix]
+name=Zabbix
+baseurl=<%= @baseurl %>
+gpgcheck=1
+gpgkey=<%= @gpgkey %>
