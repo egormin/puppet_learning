@@ -1,0 +1,31 @@
+site.pp:
+
+node default {
+ # class {'puppetdb':}
+  class { 'puppetdb::master::config': }
+class { 'puppetdb':
+    listen_address => '192.168.33.110'
+} 
+ class { 'apache': }
+}
+
+puppetdb:
+[main]
+server_urls = https://puppetdb.example.com:8081
+
+
+puppet.conf
+[master]
+  storeconfigs = true
+  storeconfigs_backend = puppetdb
+
+
+3. Edit routes.yaml
+The routes.yaml file will probably not yet exist.
+Find the path to this Puppet configuration file by running puppet master --configprint route_file.
+Create the file, if necessary, and add the following:
+---
+master:
+  facts:
+    terminus: puppetdb
+    cache: yaml
