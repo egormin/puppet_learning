@@ -1,0 +1,62 @@
+### Node
+[root@client2 vagrant]# cat /etc/puppetlabs/puppet/puppet.conf 
+# This file can be used to override the default puppet settings.
+# See the following links for more details on what settings are available:
+# - https://docs.puppetlabs.com/puppet/latest/reference/config_important_settings.html
+# - https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html
+# - https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html
+# - https://docs.puppetlabs.com/puppet/latest/reference/configuration.html
+environment = prod1
+
+[root@client2 vagrant]# 
+
+
+
+### Master:
+[root@puppet-master prod1]# pwd
+/etc/puppetlabs/code/environments/prod1
+[root@puppet-master prod1]# ls
+environment.conf  manifests  modules
+[root@puppet-master prod1]# cat environment.conf 
+modulepath = /etc/puppetlabs/code/environments/production/modules
+[root@puppet-master prod1]# 
+
+
+
+
+[root@puppet-master prod1]# cd manifests/
+[root@puppet-master manifests]# ls
+mysql_install.pp  nginx_install.pp  site.pp
+[root@puppet-master manifests]# cat site.pp 
+node default {
+  include nginx_install
+  include mysql_install
+  notify { 'Mission Complete':} 
+}
+[root@puppet-master manifests]# cat nginx_install.pp 
+class nginx_install {
+    package { 'nginx':
+        ensure => installed,
+        require => Package['epel-release']
+    }
+    package { 'epel-release':
+        ensure => installed,
+    }
+   service { 'nginx':
+        enable      => true,
+        ensure      => running,
+   }
+}
+[root@puppet-master manifests]# cat mysql_install.pp 
+class mysql_install {
+
+  include '::mysql::server'
+  
+  mysql::db { 'prod_mdb':
+    user     => 'prod_user',
+    password => 'p@$$w0rd',
+    grant    => ['ALL'],
+  }
+
+}
+[root@puppet-master manifests]# 
