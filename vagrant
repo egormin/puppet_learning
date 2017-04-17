@@ -10,7 +10,7 @@
 class ConfigData
   def self.yaml_config
     require 'yaml'
-    YAML.load_file('cli.yaml')
+    YAML.load_file('vagrant_config.yaml')
   end
 end
 
@@ -144,14 +144,15 @@ end
 
 
 
-cli.yaml
+
+vagrant_config.yaml
 
 
- host: master
-  ip: '192.168.33.25'  
+- host: master
+  ip: '192.168.33.25'
   memory: '3072'
   cpu_num: '2'
-  script: 
+  script:
    - yum install -y nano
    - rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
    - yum install -y puppetserver
@@ -162,16 +163,16 @@ cli.yaml
 
 - host: client1
   ip: '192.168.33.35'
-  script: 
+  memory:
+  cpu_num:
+  script:
    - yum install -y nano
    - rpm -Uvh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
    - yum install -y puppet-agent
    - echo "192.168.33.25 puppet" >> /etc/hosts
    - echo "192.168.33.35 client1" >> /etc/hosts
    - systemctl restart network
-  memory:
-  cpu_num:
-  script: 
+
 
 #- host: client1
 #  ip: '192.168.33.45'
