@@ -1,0 +1,55 @@
+# YAML config definition
+class ConfigData
+  def self.yaml_config
+    require 'yaml'
+    YAML.load_file('cli.yaml')
+  end
+end
+
+my_config = ConfigData.yaml_config
+
+# Vagrant configuration
+  Vagrant.configure("2") do |config|
+    config.vm.box = "centos/7"
+
+    puts "#{my_config.count} hosts configured in Vagrantfile"
+
+    my_config.each do |val|
+
+
+      config.vm.define val['host'] do |host|
+        type = val['host']
+
+        puts "Host #{type} is starting"     
+        if type == "master"  
+          puts "#{type} is starting"            
+          host.vm.hostname = type
+          host.vm.network "private_network", ip: val['ip']
+          host.vm.provision 'shell', inline: <<-SHELL
+            systemctl restart network
+          SHELL
+        else
+          puts "#{type} is starting"         
+          host.vm.hostname = type
+          host.vm.network "private_network", ip: val['ip']
+          host.vm.provision 'shell', inline: <<-SHELL
+            systemctl restart network
+          SHELL
+        end
+
+      end
+
+    end
+    
+    
+    
+    
+    cli.yaml
+- host: master
+  ip: '192.168.33.25'
+
+- host: client1
+  ip: '192.168.33.35'
+
+#- host: client2
+#  ip: '192.168.33.45'
