@@ -149,6 +149,15 @@ class { 'ntp':
 
 
 
+puppet apply /etc/puppet/modules/puppet_install/site.pp --modulepath=/etc/puppet/modules
+
+facter --custom-dir=/etc/puppet/modules/puppet_install/lib/facter definition.rb
+
+
+
+
+
+
 
 
 
